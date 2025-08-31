@@ -58,45 +58,59 @@ st.markdown("---") # Adds a horizontal line
 st.markdown("#### What you'll get every week:")
 col1, col2, col3 = st.columns(3)
 
-# Feather icons (SVG) for a cleaner look. You can find more at https://feathericons.com/
-NEWS_ICON = "https://raw.githubusercontent.com/feathericons/feather/master/icons/rss.svg"
-CONCEPTS_ICON = "https://raw.githubusercontent.com/feathericons/feather/master/icons/cpu.svg"
-SKILLS_ICON = "https://raw.githubusercontent.com/feathericons/feather/master/icons/settings.svg"
-
+# Use local feather-icons (light mode: black stroke)
+def feather_icon(icon_name):
+    icon_path = f"node_modules/feather-icons/dist/icons/{icon_name}.svg"
+    try:
+        with open(icon_path, "r") as f:
+            svg = f.read()
+        # Patch SVG: set width/height to 48, force white stroke, and add style for display
+        svg = svg.replace('<svg ', '<svg style="width:48px;height:48px;display:block;margin:0 auto;" stroke="#fff" ')
+        return f'<span style="display:inline-block;vertical-align:middle;">{svg}</span>'
+    except Exception:
+        return ""
 
 with col1:
-    st.markdown(f"""
-    <div class="feature-col">
-        <img src="{NEWS_ICON}" alt="News Icon">
-        <h5>Tech News</h5>
-        <p>The top 2-3 most important headlines in the tech and engineering world, summarized for you.</p>
-    </div>
-    """, unsafe_allow_html=True)
+    with st.container():
+        st.markdown(f"""
+        <div class="feature-col">
+            {feather_icon('pen-tool')}
+            <h5>Tech News</h5>
+            <p>The top 2-3 most important headlines in the tech and engineering world, summarized for you.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
 with col2:
-    st.markdown(f"""
-    <div class="feature-col">
-        <img src="{CONCEPTS_ICON}" alt="Core Concepts Icon">
-        <h5>Core Concepts</h5>
-        <p>A deep dive into one essential engineering topic, from CS fundamentals to universal principles.</p>
-    </div>
-    """, unsafe_allow_html=True)
+    with st.container():
+        st.markdown(f"""
+        <div class="feature-col">
+            {feather_icon('cpu')}
+            <h5>Core Concepts</h5>
+            <p>A deep dive into one essential engineering topic, from CS fundamentals to universal principles.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
 with col3:
-    st.markdown(f"""
-    <div class="feature-col">
-        <img src="{SKILLS_ICON}" alt="Life Skills Icon">
-        <h5>Life Skills</h5>
-        <p>Practical knowledge that isn't taught in school, from understanding taxes to personal finance.</p>
-    </div>
-    """, unsafe_allow_html=True)
+    with st.container():
+        st.markdown(f"""
+        <div class="feature-col">
+            {feather_icon('settings')}
+            <h5>Life Skills</h5>
+            <p>Practical knowledge that isn't taught in school, from understanding taxes to personal finance.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
 
 st.markdown("<br>", unsafe_allow_html=True) # Add some space
 
 # --- Added a new "Sample Snippet" section ---
-with st.expander("👀 See a Sample Snippet"):
-    st.markdown("##### 💡 Core Concept: What is an API?")
+with st.expander("See a Sample Snippet"):
+    st.markdown(f"""
+    <div style="display: flex; align-items: center; gap: 12px;">
+        {feather_icon('cpu')}
+        <span style="font-size: 1.1em; font-weight: 600;">Core Concept: What is an API?</span>
+    </div>
+    """, unsafe_allow_html=True)
     st.markdown("""
     Imagine you're at a restaurant. You don't go into the kitchen to cook your food; you give your order to a waiter. The waiter (the **API**) takes your request to the kitchen (**the system**), gets the food (**the data**), and brings it back to you.
 
