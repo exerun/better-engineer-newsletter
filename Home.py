@@ -1,5 +1,9 @@
 import streamlit as st
 import time
+from db import subscribe_user, init_database
+
+# Initialize database tables on startup
+init_database()
 
 # Page configuration MUST be the first Streamlit command
 st.set_page_config(
@@ -120,26 +124,55 @@ with st.expander("See a Sample Snippet"):
 
 st.markdown("---")
 
-# --- Subscription Form (Unchanged) ---
+# --- Subscription Form with Database Integration ---
 with st.form(key="subscription_form"):
     st.markdown("##### Ready to level up? Subscribe for your weekly brief.")
-    email = st.text_input(
-        "Enter your email address",
-        placeholder="you@domain.com",
-        label_visibility="collapsed"
+    
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        email = st.text_input(
+            "Enter your email address",
+            placeholder="you@domain.com",
+            label_visibility="collapsed"
+        )
+    
+    with col2:
+        frequency = st.selectbox(
+            "Frequency",
+            options=["weekly", "daily", "monthly"],
+            index=0,
+            label_visibility="collapsed"
+        )
+    
+    # Optional branch field
+    branch = st.text_input(
+        "Engineering Branch (optional)",
+        placeholder="e.g., CSE, ECE, Mechanical",
+        help="Help us tailor content to your field"
     )
+    
     submitted = st.form_submit_button("Subscribe Now")
 
     if submitted:
         if email and "@" in email and "." in email:
             with st.spinner("Subscribing..."):
-                # TODO: Add database logic here
-                time.sleep(2)
-            st.success("✅ Success! You're on the list. Check your inbox.")
+                # Use database instead of sleep
+                result = subscribe_user(
+                    email=email.strip().lower(),
+                    branch=branch.strip() if branch else None,
+                    frequency=frequency
+                )
+                
+                if result["success"]:
+                    st.success(f"✅ {result['message']} Check your inbox.")
+                    st.balloons()  # Add celebration animation
+                else:
+                    st.error(f"⚠️ {result['error']}")
         else:
             st.error("⚠️ Please enter a valid email address.")
 
 # --- Added a simple footer ---
 st.markdown("---")
-st.markdown("<div style='text-align: center; color: grey;'>© 2024 betterEngineer. All rights reserved.</div>", unsafe_allow_html=True)
+st.markdown("<div style='text-align: center; color: grey;'>© 2025 betterEngineer. All rights reserved.</div>", unsafe_allow_html=True)
 
